@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💗</text></svg>">
+<title>For You ❤️</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+
+
+
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(-45deg,#ffd1dc,#ffe4ec,#fbc2eb,#fad0c4);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+    color: #444;
+}
+
+@keyframes gradient {
+    0% {background-position:0% 50%;}
+    50% {background-position:100% 50%;}
+    100% {background-position:0% 50%;}
+}
+
+/* Floating Hearts */
+.heart {
+    position: absolute;
+    bottom: -20px;
+    font-size: 20px;
+    animation: floatUp 8s linear infinite;
+    opacity: 0.8;
+}
+
+@keyframes floatUp {
+    to {
+        transform: translateY(-110vh);
+        opacity: 0;
+    }
+}
+
+section {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 90%;
+    max-width: 500px;
+    padding: 30px;
+    background: rgba(255,255,255,0.6);
+    backdrop-filter: blur(15px);
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+section.active {
+    display: flex;
+}
+
+h1 {
+    font-size: 1.6rem;
+    margin-bottom: 15px;
+}
+
+p {
+    font-size: 1rem;
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+button {
+    padding: 12px 25px;
+    margin: 8px;
+    border-radius: 30px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.yes {
+    background: #ff69b4;
+    color: white;
+}
+
+.no {
+    background: #ddd;
+}
+
+button:hover {
+    transform: scale(1.1);
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- Floating hearts -->
+<script>
+const emojis = ["💌","😍","🥰","💝","🫶","💘","💗"];
+
+setInterval(()=>{
+    const heart = document.createElement("div");
+    heart.className="heart";
+
+    // Random emoji
+    heart.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+
+    // Random position
+    heart.style.left = Math.random() * 100 + "vw";
+
+    // Random size
+    heart.style.fontSize = (15 + Math.random() * 25) + "px";
+
+    // Random animation duration
+    heart.style.animationDuration = (5 + Math.random() * 5) + "s";
+
+    document.body.appendChild(heart);
+
+    setTimeout(()=>heart.remove(),8000);
+
+}, 500);
+
+</script>
+
+<section id="page1" class="active">
+    <h1 id="intro"></h1>
+    <button class="yes" onclick="start()">Open Your Letter 💌</button>
+</section>
+
+<section id="page2">
+    <h1>💌 A Letter For You</h1>
+    <p id="letter"></p>
+    <button class="yes" onclick="proposal()">Continue ❤️</button>
+</section>
+
+<section id="page3">
+    <h1 id="question"></h1>
+    <div>
+        <button class="yes" onclick="yesClicked()">YES 💖</button>
+        <button class="no" id="noBtn" onclick="noClicked()">NO 😜</button>
+    </div>
+</section>
+
+<script>
+
+// GET URL DATA
+const params = new URLSearchParams(window.location.search);
+
+const sender = params.get("from") || "Someone";
+const receiver = params.get("to") || "You";
+const customLetter = params.get("letter") || 
+`From the moment I met you, everything felt different. 
+You bring light into my life and make even ordinary days special. 
+I just wanted you to know how much you mean to me. ❤️`;
+
+document.getElementById("intro").innerHTML = 
+"Hey " + receiver + " ❤️";
+
+document.getElementById("letter").innerHTML = customLetter;
+
+document.getElementById("question").innerHTML = 
+receiver + ", will you be mine? 💍";
+
+// PAGE SWITCH
+function show(id){
+    document.querySelectorAll("section").forEach(sec=>sec.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+}
+
+// MUSIC
+let player;
+let musicStarted = false;
+
+function onYouTubeIframeAPIReady() {
+    player = new YT.Player('player', {
+        height: '0',
+        width: '0',
+        videoId: 'siO6dkqidc4', // The Smiths song
+        playerVars: {
+            autoplay: 0,
+            loop: 1,
+            playlist: 'siO6dkqidc4'
+        }
+    });
+}
+
+function startMusic() {
+    if (!musicStarted && player) {
+        player.playVideo();
+        musicStarted = true;
+    }
+}
+
+
+
+function start(){
+    startMusic();
+    show("page2");
+}
+
+function proposal(){
+    show("page3");
+}
+
+function yesClicked(){
+    confetti({particleCount:200,spread:100});
+    document.getElementById("page3").innerHTML=
+    "<h1>Yay!!! ❤️ You just made "+sender+" the happiest person 🥰</h1>";
+}
+
+// PHONE NO BUTTON TRAP
+let noCount = 0;
+
+const questions = [
+"Are you sure? 🥺",
+"Really really sure? 💔",
+"Think again maybe? 🥹",
+"I'll be very sad... 😢",
+"Like... very very sad 😭",
+"But we look so cute together 🥰",
+"What if this is destiny? ✨",
+"Just imagine our future 😌",
+"Okay but why no though? 😏",
+"You’re breaking my heart 💔",
+"This is your last chance 👀",
+"Still no? 😳",
+"You sure sure sure?? 🫣",
+"Fine… I’ll ask one more time 💖"
+];
+
+const noTexts = [
+"No 🙃",
+"Still No 😅",
+"Maybe No 😬",
+"Okay No 😶",
+"Why No 😭",
+"Ummm No 🥲",
+"Idk No 🤔",
+"Last No 😳",
+"Stop Asking 😩",
+"No Means No 😤",
+"Okay Fine No 😑",
+"Seriously No 😐",
+"This Is Final 😶",
+"Fine… 😔"
+];
+
+function noClicked(){
+
+    if(noCount < 14){
+        document.getElementById("question").innerText = questions[noCount];
+        document.getElementById("noBtn").innerText = noTexts[noCount];
+        noCount++;
+    } 
+    else {
+        // After 14 tries (PHONE ONLY)
+        if(window.innerWidth < 768){
+            yesClicked();
+        } else {
+            document.getElementById("question").innerText = 
+            "Okay okay 😅 I respect your decision 💛";
+            document.getElementById("noBtn").style.display="none";
+        }
+    }
+}
+
+
+</script>
+
+</body>
+</html>
